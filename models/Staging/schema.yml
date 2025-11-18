@@ -1,0 +1,104 @@
+version: 2
+
+models:
+  - name: stg_users
+    description: "Cleansed ecommerce users staging model."
+    columns:
+      - name: user_id
+        description: "Primary key for the user."
+        tests:
+          - unique
+          - not_null
+      - name: email
+        description: "Lower-cased user email."
+        tests:
+          - not_null
+      - name: signup_date
+        description: "Date the user signed up."
+      - name: country
+        description: "Upper-cased country code or name."
+      - name: customer_segment
+        description: "Upper-cased segment (PREMIUM, STANDARD, BASIC)."
+
+  - name: stg_products
+    description: "Cleansed product dimension staging model."
+    columns:
+      - name: product_id
+        description: "Primary key for the product."
+        tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: "Product display name."
+        tests:
+          - not_null
+      - name: category
+        description: "Upper-cased merchandising category."
+      - name: supplier_id
+        description: "Identifier linking to supplier records."
+      - name: unit_cost
+        description: "Cost basis for each unit."
+
+  - name: stg_orders
+    description: "Order fact staging model with normalized status fields."
+    columns:
+      - name: order_id
+        description: "Primary key for the order."
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: "Foreign key to stg_users."
+        tests:
+          - not_null
+      - name: order_date
+        description: "Date of the order."
+      - name: status
+        description: "Lower-cased order status."
+      - name: is_completed
+        description: "Boolean flag for completed orders."
+      - name: total_amount
+        description: "Order revenue amount."
+
+  - name: stg_order_items
+    description: "Normalized order line items with calculated gross sales."
+    columns:
+      - name: order_item_id
+        description: "Primary key for the order line item."
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: "Foreign key to stg_orders."
+        tests:
+          - not_null
+      - name: product_id
+        description: "Foreign key to stg_products."
+        tests:
+          - not_null
+      - name: quantity
+        description: "Number of units sold."
+      - name: unit_price
+        description: "Price charged per unit."
+      - name: gross_item_sales
+        description: "Extended price (quantity * unit_price)."
+
+  - name: stg_returns
+    description: "Returns staging model capturing refund activity."
+    columns:
+      - name: return_id
+        description: "Primary key for the return."
+        tests:
+          - unique
+          - not_null
+      - name: order_item_id
+        description: "Foreign key to stg_order_items."
+        tests:
+          - not_null
+      - name: return_date
+        description: "Date the return was processed."
+      - name: return_reason
+        description: "Lower-cased standardized return reason."
+      - name: refund_amount
+        description: "Amount refunded to the customer."
+
