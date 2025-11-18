@@ -19,6 +19,9 @@ models:
         description: "Upper-cased country code or name."
       - name: customer_segment
         description: "Upper-cased segment (PREMIUM, STANDARD, BASIC)."
+        tests:
+          - accepted_values:
+              values: ['Premium', 'Standard', 'Basic']
       - name: ingested_at
         description: "Timestamp when the raw record was ingested."
 
@@ -40,6 +43,11 @@ models:
         description: "Identifier linking to supplier records."
       - name: unit_cost
         description: "Cost basis for each unit."
+        tests:
+          - not_null
+          - accepted_range:
+              min_value: 0
+              inclusive: true
       - name: ingested_at
         description: "Timestamp when the raw record was ingested."
 
@@ -55,10 +63,18 @@ models:
         description: "Foreign key to stg_users."
         tests:
           - not_null
+          - relationships:
+              to: ref('stg_users')
+              field: user_id
       - name: order_date
         description: "Date of the order."
+        tests:
+          - not_null
       - name: status
         description: "Lower-cased order status."
+        tests:
+          - accepted_values:
+              values: ['completed', 'cancelled', 'pending', 'processing']
       - name: is_completed
         description: "Boolean flag for completed orders."
       - name: total_amount
@@ -78,16 +94,34 @@ models:
         description: "Foreign key to stg_orders."
         tests:
           - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
       - name: product_id
         description: "Foreign key to stg_products."
         tests:
           - not_null
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
       - name: quantity
         description: "Number of units sold."
+        tests:
+          - not_null
+          - accepted_range:
+              min_value: 1
+              inclusive: true
       - name: unit_price
         description: "Price charged per unit."
+        tests:
+          - not_null
+          - accepted_range:
+              min_value: 0
+              inclusive: true
       - name: gross_item_sales
         description: "Extended price (quantity * unit_price)."
+        tests:
+          - not_null
       - name: ingested_at
         description: "Timestamp when the raw record was ingested."
 
@@ -103,12 +137,26 @@ models:
         description: "Foreign key to stg_order_items."
         tests:
           - not_null
+          - relationships:
+              to: ref('stg_order_items')
+              field: order_item_id
       - name: return_date
         description: "Date the return was processed."
+        tests:
+          - not_null
       - name: return_reason
         description: "Lower-cased standardized return reason."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['defective', 'changed_mind', 'wrong_item', 'damaged_shipping']
       - name: refund_amount
         description: "Amount refunded to the customer."
+        tests:
+          - not_null
+          - accepted_range:
+              min_value: 0
+              inclusive: true
       - name: ingested_at
         description: "Timestamp when the raw record was ingested."
 

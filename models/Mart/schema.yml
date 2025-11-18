@@ -16,6 +16,9 @@ models:
         description: "Links to dim_customers."
         tests:
           - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
       - name: primary_product_id
         description: "Top-selling product within the order."
       - name: net_sales
@@ -30,8 +33,14 @@ models:
           - not_null
       - name: loyalty_tier
         description: "Revenue-based tier classification."
+        tests:
+          - accepted_values:
+              values: ['VIP', 'GROWTH', 'NEW', 'PROSPECT']
       - name: engagement_band
         description: "Order-frequency based band."
+        tests:
+          - accepted_values:
+              values: ['LOYAL', 'ACTIVE', 'NEW', 'INACTIVE']
 
   - name: mart_product_performance
     description: "Product-level profitability and return performance mart."
@@ -42,8 +51,18 @@ models:
           - not_null
       - name: return_rate
         description: "Share of units returned."
+        tests:
+          - accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true
       - name: profit_margin_after_returns
         description: "Net profit divided by gross sales."
+        tests:
+          - accepted_range:
+              min_value: -1
+              max_value: 1
+              inclusive: true
 
   - name: mart_customer_segment_performance
     description: "Segment-level KPIs summarizing customer behavior and profitability."
