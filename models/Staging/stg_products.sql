@@ -3,7 +3,7 @@
 with source as (
 
     select *
-    from {{ ref('raw_products') }}
+    from {{ source('raw_ecommerce', 'products') }}
 
 ),
 renamed as (
@@ -13,7 +13,8 @@ renamed as (
         product_name,
         upper(category) as category,
         cast(supplier_id as integer) as supplier_id,
-        cast(cost as {{ dbt.type_numeric() }}) as unit_cost
+        cast(cost as {{ dbt.type_numeric() }}) as unit_cost,
+        cast(ingested_at as timestamp) as ingested_at
     from source
 
 )

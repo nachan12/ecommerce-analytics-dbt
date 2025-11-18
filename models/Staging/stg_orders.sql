@@ -3,7 +3,7 @@
 with source as (
 
     select *
-    from {{ ref('raw_orders') }}
+    from {{ source('raw_ecommerce', 'orders') }}
 
 ),
 renamed as (
@@ -17,7 +17,8 @@ renamed as (
             when lower(status) = 'completed' then true
             else false
         end as is_completed,
-        cast(total_amount as {{ dbt.type_numeric() }}) as total_amount
+        cast(total_amount as {{ dbt.type_numeric() }}) as total_amount,
+        cast(ingested_at as timestamp) as ingested_at
     from source
 
 )

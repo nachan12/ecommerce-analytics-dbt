@@ -19,6 +19,8 @@ models:
         description: "Upper-cased country code or name."
       - name: customer_segment
         description: "Upper-cased segment (PREMIUM, STANDARD, BASIC)."
+      - name: ingested_at
+        description: "Timestamp when the raw record was ingested."
 
   - name: stg_products
     description: "Cleansed product dimension staging model."
@@ -38,6 +40,8 @@ models:
         description: "Identifier linking to supplier records."
       - name: unit_cost
         description: "Cost basis for each unit."
+      - name: ingested_at
+        description: "Timestamp when the raw record was ingested."
 
   - name: stg_orders
     description: "Order fact staging model with normalized status fields."
@@ -59,6 +63,8 @@ models:
         description: "Boolean flag for completed orders."
       - name: total_amount
         description: "Order revenue amount."
+      - name: ingested_at
+        description: "Timestamp when the raw record was ingested."
 
   - name: stg_order_items
     description: "Normalized order line items with calculated gross sales."
@@ -82,6 +88,8 @@ models:
         description: "Price charged per unit."
       - name: gross_item_sales
         description: "Extended price (quantity * unit_price)."
+      - name: ingested_at
+        description: "Timestamp when the raw record was ingested."
 
   - name: stg_returns
     description: "Returns staging model capturing refund activity."
@@ -101,4 +109,6 @@ models:
         description: "Lower-cased standardized return reason."
       - name: refund_amount
         description: "Amount refunded to the customer."
+      - name: ingested_at
+        description: "Timestamp when the raw record was ingested."
 

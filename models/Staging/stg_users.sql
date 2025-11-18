@@ -3,7 +3,7 @@
 with source as (
 
     select *
-    from {{ ref('raw_users') }}
+    from {{ source('raw_ecommerce', 'users') }}
 
 ),
 renamed as (
@@ -13,7 +13,8 @@ renamed as (
         lower(email) as email,
         cast(signup_date as date) as signup_date,
         upper(country) as country,
-        upper(customer_segment) as customer_segment
+        upper(customer_segment) as customer_segment,
+        cast(ingested_at as timestamp) as ingested_at
     from source
 
 )
