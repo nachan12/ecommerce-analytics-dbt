@@ -46,6 +46,8 @@ dbt docs serve
 ## Testing & Quality
 - Generic tests (unique, not_null, relationships).
 - Custom tests provided under `tests/` and `macros/tests/`.
+- **dbt_utils integration**: Uses `dbt_utils.accepted_range` and `dbt_utils.unique_combination_of_columns` tests.
+  See [docs/DBT_UTILS_INTEGRATION.md](docs/DBT_UTILS_INTEGRATION.md) for details.
 
 ## Performance Optimization
 

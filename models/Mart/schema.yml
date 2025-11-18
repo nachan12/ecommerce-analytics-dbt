@@ -57,20 +57,33 @@ models:
       - name: return_rate
         description: "Share of units returned."
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true
+          - accepted_range:  # Custom test (fallback)
               min_value: 0
               max_value: 1
               inclusive: true
       - name: profit_margin_after_returns
         description: "Net profit divided by gross sales."
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
+              min_value: -1
+              max_value: 1
+              inclusive: true
+          - accepted_range:  # Custom test (fallback)
               min_value: -1
               max_value: 1
               inclusive: true
 
   - name: mart_customer_segment_performance
     description: "Segment-level KPIs summarizing customer behavior and profitability."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - customer_segment
+            - loyalty_tier
     columns:
       - name: customer_segment
         tests:
@@ -80,4 +93,9 @@ models:
           - not_null
       - name: active_customer_ratio
         description: "Active customers divided by total segment customers."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true
 

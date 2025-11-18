@@ -45,7 +45,10 @@ models:
         description: "Cost basis for each unit."
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+          - accepted_range:  # Custom test (fallback)
               min_value: 0
               inclusive: true
       - name: ingested_at
@@ -108,14 +111,20 @@ models:
         description: "Number of units sold."
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
+              min_value: 1
+              inclusive: true
+          - accepted_range:  # Custom test (fallback)
               min_value: 1
               inclusive: true
       - name: unit_price
         description: "Price charged per unit."
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+          - accepted_range:  # Custom test (fallback)
               min_value: 0
               inclusive: true
       - name: gross_item_sales
@@ -154,7 +163,10 @@ models:
         description: "Amount refunded to the customer."
         tests:
           - not_null
-          - accepted_range:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+          - accepted_range:  # Custom test (fallback)
               min_value: 0
               inclusive: true
       - name: ingested_at

@@ -60,7 +60,9 @@ final as (
         coalesce(olm.gross_item_sales, 0) as gross_item_sales,
         coalesce(rbo.total_refund_amount, 0) as total_refund_amount,
         coalesce(olm.gross_item_sales, 0) - coalesce(rbo.total_refund_amount, 0) as net_sales,
-        coalesce(rbo.return_count, 0) as return_count
+        coalesce(rbo.return_count, 0) as return_count,
+        -- Use dbt_utils.generate_surrogate_key for composite key
+        {{ dbt_utils.generate_surrogate_key(['o.order_id', 'o.user_id', 'o.order_date']) }} as order_surrogate_key
     from orders o
     left join order_line_metrics olm using (order_id)
     left join returns_by_order rbo using (order_id)
