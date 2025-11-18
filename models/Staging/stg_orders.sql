@@ -1,3 +1,12 @@
+{#
+    Performance Optimization Strategy:
+    - Materialization: View for lightweight transformations
+    - Rationale: Staging models are simple transformations (casting, lowercasing) that don't
+      require materialization. Views keep the pipeline lightweight and ensure fresh data.
+    
+    For very large datasets (>100M rows), consider materializing as a table with partitioning
+    by order_date for better query performance.
+#}
 {{ config(materialized='view') }}
 
 with source as (

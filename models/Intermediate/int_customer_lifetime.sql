@@ -1,4 +1,18 @@
-{{ config(materialized='table') }}
+{#
+    Performance Optimization Strategy:
+    - Materialization: Table to cache expensive customer-level aggregations
+    - Clustering: Recommended to cluster by customer_segment for segmentation queries
+    
+    This intermediate table aggregates all completed orders per customer, which is computationally
+    expensive. Materializing as a table avoids recomputing lifetime metrics on every query.
+#}
+{{ config(
+    materialized='table',
+    # Uncomment and adjust for your warehouse:
+    # BigQuery: cluster_by=['customer_segment']
+    # Snowflake: cluster_by=['customer_segment']
+    # Redshift: diststyle ALL (small table), sortkey customer_segment
+) }}
 
 with customers as (
 

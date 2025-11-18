@@ -1,7 +1,24 @@
+{#
+    Performance Optimization Strategy:
+    - Materialization: Incremental (merge strategy) to only process new/changed orders
+    - Partitioning: Recommended to partition by order_date for time-based queries
+    - Clustering: Recommended to cluster by customer_id and order_date for join performance
+    - Indexes: Primary key on order_id, indexes on customer_id and order_date
+    
+    Warehouse-specific notes:
+    - BigQuery: Use partition_by={'field': 'order_date', 'data_type': 'date'} and cluster_by=['customer_id', 'order_date']
+    - Snowflake: Use cluster_by=['order_date', 'customer_id'] in config
+    - Redshift: Use diststyle KEY distkey customer_id and sortkey (order_date, customer_id)
+    - Postgres: Create indexes on (order_id), (customer_id), (order_date)
+#}
 {{ config(
     materialized='incremental',
     unique_key='order_id',
-    incremental_strategy='merge'
+    incremental_strategy='merge',
+    # Uncomment and adjust for your warehouse:
+    # BigQuery: partition_by={'field': 'order_date', 'data_type': 'date'}, cluster_by=['customer_id', 'order_date']
+    # Snowflake: cluster_by=['order_date', 'customer_id']
+    # Redshift: diststyle='KEY', distkey='customer_id', sortkey=['order_date', 'customer_id']
 ) }}
 
 {% set reprocess_days = var('fct_orders_reprocess_days', 14) %}

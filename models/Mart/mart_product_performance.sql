@@ -1,4 +1,17 @@
-{{ config(materialized='table') }}
+{#
+    Performance Optimization Strategy:
+    - Materialization: Table for analytical queries and aggregations
+    - Clustering: Recommended to cluster by category for category-level analysis
+    
+    This mart is typically queried by category, so clustering improves filter performance.
+#}
+{{ config(
+    materialized='table',
+    # Uncomment and adjust for your warehouse:
+    # BigQuery: cluster_by=['category']
+    # Snowflake: cluster_by=['category']
+    # Redshift: diststyle ALL (small table), sortkey category
+) }}
 
 with product_performance as (
 

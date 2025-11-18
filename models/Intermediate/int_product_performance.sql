@@ -1,4 +1,18 @@
-{{ config(materialized='table') }}
+{#
+    Performance Optimization Strategy:
+    - Materialization: Table to cache expensive product-level aggregations
+    - Clustering: Recommended to cluster by category for category-level queries
+    
+    This intermediate table aggregates sales and returns at the product level, which is
+    computationally expensive. Materializing as a table avoids recomputation.
+#}
+{{ config(
+    materialized='table',
+    # Uncomment and adjust for your warehouse:
+    # BigQuery: cluster_by=['category']
+    # Snowflake: cluster_by=['category']
+    # Redshift: diststyle ALL (small table), sortkey category
+) }}
 
 with products as (
 

@@ -1,4 +1,22 @@
-{{ config(materialized='table') }}
+{#
+    Performance Optimization Strategy:
+    - Materialization: Table for fast lookups and joins
+    - Clustering: Recommended to cluster by customer_segment and loyalty_tier for filtering
+    - Indexes: Primary key on customer_id, indexes on customer_segment, loyalty_tier, country
+    
+    Warehouse-specific notes:
+    - BigQuery: Use cluster_by=['customer_segment', 'loyalty_tier']
+    - Snowflake: Use cluster_by=['customer_segment', 'loyalty_tier']
+    - Redshift: Use diststyle ALL (small dimension table) and sortkey (customer_segment, loyalty_tier)
+    - Postgres: Create indexes on (customer_id), (customer_segment), (loyalty_tier)
+#}
+{{ config(
+    materialized='table',
+    # Uncomment and adjust for your warehouse:
+    # BigQuery: cluster_by=['customer_segment', 'loyalty_tier']
+    # Snowflake: cluster_by=['customer_segment', 'loyalty_tier']
+    # Redshift: diststyle='ALL', sortkey=['customer_segment', 'loyalty_tier']
+) }}
 
 with customer_lifetime as (
 

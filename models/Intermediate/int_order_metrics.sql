@@ -1,4 +1,19 @@
-{{ config(materialized='table') }}
+{#
+    Performance Optimization Strategy:
+    - Materialization: Table to cache expensive aggregations (line items + returns)
+    - Partitioning: Recommended to partition by order_date for incremental downstream processing
+    - Clustering: Recommended to cluster by user_id for customer-level queries
+    
+    This intermediate table is heavily used by fct_orders and other marts, so materializing
+    as a table avoids recomputing aggregations on every query.
+#}
+{{ config(
+    materialized='table',
+    # Uncomment and adjust for your warehouse:
+    # BigQuery: partition_by={'field': 'order_date', 'data_type': 'date'}, cluster_by=['user_id']
+    # Snowflake: cluster_by=['order_date', 'user_id']
+    # Redshift: diststyle KEY distkey user_id, sortkey (order_date, user_id)
+) }}
 
 with orders as (
 

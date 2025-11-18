@@ -37,6 +37,7 @@ dbt docs serve
 - `models/staging/` - staging models with field descriptions.
 - `models/intermediate/` - business logic.
 - `models/marts/` - analytical marts (fact + dims).
+- `analyses/` - complex analytical queries demonstrating advanced SQL patterns.
 - `macros/` - custom macro(s).
 - `snapshots/` - Type-2 snapshot for product price changes.
 - `tests/` - custom tests.
@@ -46,10 +47,28 @@ dbt docs serve
 - Generic tests (unique, not_null, relationships).
 - Custom tests provided under `tests/` and `macros/tests/`.
 
-## Performance considerations
-- Materializations chosen: staging (view), intermediate (ephemeral/table), marts (table/incremental).
-- Incremental model example included (`fct_orders` incremental).
-- If using Postgres/BigQuery/Snowflake, consider partitioning and clustering on order_date and customer_id.
+## Performance Optimization
+
+This project implements a comprehensive performance optimization strategy across all layers:
+
+### Materialization Strategy
+- **Staging Layer**: Views for lightweight transformations and data freshness
+- **Intermediate Layer**: Tables to cache expensive aggregations
+- **Mart Layer**: Tables for analytical queries, with `fct_orders` using incremental materialization
+
+### Key Optimizations
+- **Incremental Processing**: `fct_orders` uses incremental materialization with merge strategy, processing only the last 14 days by default
+- **Pre-aggregation**: Intermediate models pre-compute metrics to avoid repeated calculations
+- **Partitioning**: Recommended partitioning by `order_date` for fact tables (warehouse-specific)
+- **Clustering**: Recommended clustering by `customer_id` and `order_date` for join performance
+
+### Warehouse-Specific Recommendations
+- **BigQuery**: Partition by `order_date`, cluster by `customer_id` and `order_date`
+- **Snowflake**: Cluster by `order_date` and `customer_id`
+- **Redshift**: Use KEY distribution on `customer_id`, sort by `order_date` and `customer_id`
+- **Postgres**: Create indexes on foreign keys and date columns
+
+For detailed optimization strategies, see [docs/PERFORMANCE_OPTIMIZATION.md](docs/PERFORMANCE_OPTIMIZATION.md).
 
 ## How to reproduce a shareable commit history
 Run:
