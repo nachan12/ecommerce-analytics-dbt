@@ -56,10 +56,7 @@ final as (
         coalesce(ps.orders_sold, 0) as orders_sold,
         coalesce(ps.total_units_sold, 0) as total_units_sold,
         coalesce(ps.gross_sales, 0) as gross_sales,
-        case
-            when coalesce(ps.total_units_sold, 0) = 0 then null
-            else coalesce(ps.gross_sales, 0) / ps.total_units_sold
-        end as avg_unit_price_realized,
+        {{ safe_divide('coalesce(ps.gross_sales, 0)', 'ps.total_units_sold', default_value='null') }} as avg_unit_price_realized,
         coalesce(pr.return_count, 0) as return_count,
         coalesce(pr.units_returned, 0) as units_returned,
         coalesce(pr.refund_amount, 0) as total_refund_amount,

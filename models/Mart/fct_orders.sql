@@ -1,10 +1,21 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='incremental',
+    unique_key='order_id',
+    incremental_strategy='merge'
+) }}
+
+{% set reprocess_days = var('fct_orders_reprocess_days', 14) %}
 
 with orders as (
 
     select *
     from {{ ref('int_order_metrics') }}
-
+    {% if is_incremental() %}
+    where order_date >= (
+        select {{ subtract_days('max(order_date)', reprocess_days) }}
+        from {{ this }}
+    )
+    {% endif %}
 ),
 customer_dim as (
 

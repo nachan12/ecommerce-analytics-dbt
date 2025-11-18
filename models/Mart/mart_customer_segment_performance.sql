@@ -29,19 +29,13 @@ final as (
         loyalty_tier,
         customer_count,
         active_customer_count,
-        case
-            when customer_count = 0 then 0
-            else cast(active_customer_count as {{ dbt.type_float() }}) / customer_count
-        end as active_customer_ratio,
+        {{ safe_divide('active_customer_count', 'customer_count', default_value=0) }} as active_customer_ratio,
         avg_lifetime_revenue,
         total_segment_revenue,
         avg_completed_orders,
         total_segment_refunds,
         avg_returns_per_customer,
-        case
-            when total_segment_revenue = 0 then 0
-            else total_segment_refunds / total_segment_revenue
-        end as refund_to_revenue_ratio
+        {{ safe_divide('total_segment_refunds', 'total_segment_revenue', default_value=0) }} as refund_to_revenue_ratio
     from segment_rollup
 
 )

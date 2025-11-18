@@ -2,7 +2,11 @@ version: 2
 
 models:
   - name: fct_orders
-    description: "Order fact table enriched with customer attributes and predominant product context."
+    description: |
+      Order fact table enriched with customer attributes and predominant product context.
+      Built as an incremental table that merges on `order_id` and reloads a rolling window
+      (defaults to 14 days via `fct_orders_reprocess_days`) so status changes, refunds, or
+      other late-arriving updates are re-processed automatically.
     columns:
       - name: order_id
         tests:
