@@ -105,7 +105,7 @@ final as (
             rows between 29 preceding and current row
         ) as revenue_30day_total,
         -- Day of week for weekly pattern analysis
-        {{ dbt_utils.date_trunc('week', 'revenue_date') }} as week_start_date,
+       
         -- Calculate days since first order (for cohort analysis)
         datediff('day', 
             min(revenue_date) over (partition by customer_segment, loyalty_tier),
