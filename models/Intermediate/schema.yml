@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: int_order_metrics
+    description: "Order-level facts enriched with line-item rollups and return data."
+    columns:
+      - name: order_id
+        description: "Primary key for the order."
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: "Customer placing the order."
+        tests:
+          - not_null
+      - name: order_date
+        description: "Order creation date."
+      - name: gross_item_sales
+        description: "Sum of line item extended prices."
+      - name: total_refund_amount
+        description: "Total refunds tied to the order."
+      - name: net_sales
+        description: "Gross item sales minus refunds."
+
+  - name: int_customer_lifetime
+    description: "Customer profile with lifetime revenue, order counts, and refund stats."
+    columns:
+      - name: user_id
+        description: "Primary key for the customer."
+        tests:
+          - unique
+          - not_null
+      - name: completed_order_count
+        description: "Number of completed orders."
+      - name: lifetime_revenue
+        description: "Sum of net sales across completed orders."
+      - name: first_order_date
+        description: "First observed completed order date."
+      - name: most_recent_order_date
+        description: "Most recent completed order date."
+
+  - name: int_product_performance
+    description: "Product-level performance metrics combining sales, returns, and profitability."
+    columns:
+      - name: product_id
+        description: "Primary key for the product."
+        tests:
+          - unique
+          - not_null
+      - name: total_units_sold
+        description: "Units sold on completed orders."
+      - name: gross_sales
+        description: "Gross revenue from completed orders."
+      - name: total_refund_amount
+        description: "Total refunds attributed to the product."
+      - name: gross_profit_after_returns
+        description: "Gross profit net of refunds."
+

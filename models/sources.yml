@@ -1,0 +1,97 @@
+version: 2
+
+sources:
+  - name: DEV
+    description: "Seeded raw extracts for ecommerce data feeds."
+    tables:
+      - name: users
+        identifier: raw_users
+        description: "Customer profile records captured at signup."
+        loaded_at_field: ingested_at
+        freshness:
+          warn_after: {count: 7, period: day}
+          error_after: {count: 14, period: day}
+        columns:
+          - name: user_id
+            description: "Natural key for the user."
+            tests:
+              - not_null
+          - name: email
+            description: "User email address."
+            tests:
+              - not_null
+          - name: signup_date
+            description: "Signup date used as the freshness watermark."
+      - name: products
+        identifier: raw_products
+        description: "Product catalog with supplier and cost attributes."
+        loaded_at_field: ingested_at
+        freshness:
+          warn_after: {count: 30, period: day}
+          error_after: {count: 60, period: day}
+        columns:
+          - name: product_id
+            description: "Product identifier."
+            tests:
+              - not_null
+          - name: product_name
+            description: "Display name for the product."
+          - name: cost
+            description: "Unit cost basis provided by supplier."
+      - name: orders
+        identifier: raw_orders
+        description: "Order header data with customer ownership and totals."
+        loaded_at_field: ingested_at
+        freshness:
+          warn_after: {count: 3, period: day}
+          error_after: {count: 7, period: day}
+        columns:
+          - name: order_id
+            description: "Unique order identifier."
+            tests:
+              - not_null
+          - name: user_id
+            description: "Customer who placed the order."
+          - name: order_date
+            description: "Date of the order."
+            tests:
+              - not_null
+          - name: total_amount
+            description: "Order total captured at checkout."
+      - name: order_items
+        identifier: raw_order_items
+        description: "Line level order details with pricing and quantities."
+        loaded_at_field: ingested_at
+        freshness:
+          warn_after: {count: 3, period: day}
+          error_after: {count: 7, period: day}
+        columns:
+          - name: order_item_id
+            description: "Line identifier."
+            tests:
+              - not_null
+          - name: order_id
+            description: "Parent order identifier."
+          - name: product_id
+            description: "Product sold on the line."
+          - name: quantity
+            description: "Units sold on the line."
+      - name: returns
+        identifier: raw_returns
+        description: "Return transactions tied to order items."
+        loaded_at_field: ingested_at
+        freshness:
+          warn_after: {count: 7, period: day}
+          error_after: {count: 14, period: day}
+        columns:
+          - name: return_id
+            description: "Return identifier."
+            tests:
+              - not_null
+          - name: order_item_id
+            description: "Order line that was returned."
+          - name: return_date
+            description: "Date the return was logged."
+          - name: refund_amount
+            description: "Amount refunded to the customer."
+

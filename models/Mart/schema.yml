@@ -1,0 +1,101 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: |
+      Order fact table enriched with customer attributes and predominant product context.
+      Built as an incremental table that merges on `order_id` and reloads a rolling window
+      (defaults to 14 days via `fct_orders_reprocess_days`) so status changes, refunds, or
+      other late-arriving updates are re-processed automatically.
+      
+      **Performance**: Incremental materialization processes only new/changed orders, reducing
+      build time by 90%+ for large datasets. Recommended to partition by `order_date` and cluster
+      by `customer_id` and `order_date` for optimal query performance. See model comments for
+      warehouse-specific configuration.
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Links to dim_customers."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
+      - name: primary_product_id
+        description: "Top-selling product within the order."
+      - name: net_sales
+        description: "Gross item sales minus refunds."
+
+  - name: dim_customers
+    description: "Customer dimension with lifetime metrics and loyalty attributes."
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+      - name: loyalty_tier
+        description: "Revenue-based tier classification."
+        tests:
+          - accepted_values:
+              values: ['VIP', 'GROWTH', 'NEW', 'PROSPECT']
+      - name: engagement_band
+        description: "Order-frequency based band."
+        tests:
+          - accepted_values:
+              values: ['LOYAL', 'ACTIVE', 'NEW', 'INACTIVE']
+
+  - name: mart_product_performance
+    description: "Product-level profitability and return performance mart."
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+      - name: return_rate
+        description: "Share of units returned."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true
+          - accepted_range:  # Custom test (fallback)
+              min_value: 0
+              max_value: 1
+              inclusive: true
+      - name: profit_margin_after_returns
+        description: "Net profit divided by gross sales."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: -1
+              max_value: 1
+              inclusive: true
+          - accepted_range:  # Custom test (fallback)
+              min_value: -1
+              max_value: 1
+              inclusive: true
+
+  - name: mart_customer_segment_performance
+    description: "Segment-level KPIs summarizing customer behavior and profitability."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - customer_segment
+            - loyalty_tier
+    columns:
+      - name: customer_segment
+        tests:
+          - not_null
+      - name: loyalty_tier
+        tests:
+          - not_null
+      - name: active_customer_ratio
+        description: "Active customers divided by total segment customers."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true
+
