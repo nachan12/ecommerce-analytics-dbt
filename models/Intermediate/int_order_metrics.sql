@@ -9,10 +9,7 @@
 #}
 {{ config(
     materialized='table',
-    # Uncomment and adjust for your warehouse:
-    # BigQuery: partition_by={'field': 'order_date', 'data_type': 'date'}, cluster_by=['user_id']
-    # Snowflake: cluster_by=['order_date', 'user_id']
-    # Redshift: diststyle KEY distkey user_id, sortkey (order_date, user_id)
+    Snowflake_cluster_by=['order_date', 'user_id']
 ) }}
 
 with orders as (
@@ -70,5 +67,5 @@ final as (
 )
 
 select *
-from final;
+from final
 

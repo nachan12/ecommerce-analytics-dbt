@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: raw_ecommerce
+  - name: DEV
     description: "Seeded raw extracts for ecommerce data feeds."
     tables:
       - name: users

@@ -41,5 +41,5 @@ final as (
 )
 
 select *
-from final;
+from final
 

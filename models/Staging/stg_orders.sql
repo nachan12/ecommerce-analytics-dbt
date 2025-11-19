@@ -12,7 +12,7 @@
 with source as (
 
     select *
-    from {{ source('raw_ecommerce', 'orders') }}
+    from {{ source('DEV', 'orders') }}
 
 ),
 renamed as (
@@ -33,5 +33,5 @@ renamed as (
 )
 
 select *
-from renamed;
+from renamed
 

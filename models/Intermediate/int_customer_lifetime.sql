@@ -8,10 +8,7 @@
 #}
 {{ config(
     materialized='table',
-    # Uncomment and adjust for your warehouse:
-    # BigQuery: cluster_by=['customer_segment']
-    # Snowflake: cluster_by=['customer_segment']
-    # Redshift: diststyle ALL (small table), sortkey customer_segment
+    Snowflake_cluster_by=['customer_segment']  
 ) }}
 
 with customers as (
@@ -65,5 +62,5 @@ final as (
 )
 
 select *
-from final;
+from final
 

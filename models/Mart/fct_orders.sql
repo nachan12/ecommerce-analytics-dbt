@@ -15,11 +15,8 @@
     materialized='incremental',
     unique_key='order_id',
     incremental_strategy='merge',
-    # Uncomment and adjust for your warehouse:
-    # BigQuery: partition_by={'field': 'order_date', 'data_type': 'date'}, cluster_by=['customer_id', 'order_date']
-    # Snowflake: cluster_by=['order_date', 'customer_id']
-    # Redshift: diststyle='KEY', distkey='customer_id', sortkey=['order_date', 'customer_id']
-) }}
+    Snowflake_cluster_by=['order_date', 'customer_id']
+   ) }}
 
 {% set reprocess_days = var('fct_orders_reprocess_days', 14) %}
 
@@ -37,7 +34,7 @@ with orders as (
 customer_dim as (
 
     select
-        user_id as customer_id,
+         customer_id,
         email,
         country,
         customer_segment,
@@ -136,5 +133,5 @@ final as (
 )
 
 select *
-from final;
+from final
 

@@ -12,10 +12,7 @@
 #}
 {{ config(
     materialized='table',
-    # Uncomment and adjust for your warehouse:
-    # BigQuery: cluster_by=['customer_segment', 'loyalty_tier']
-    # Snowflake: cluster_by=['customer_segment', 'loyalty_tier']
-    # Redshift: diststyle='ALL', sortkey=['customer_segment', 'loyalty_tier']
+    Snowflake_cluster_by=['customer_segment', 'loyalty_tier']
 ) }}
 
 with customer_lifetime as (
@@ -71,5 +68,5 @@ final as (
 )
 
 select *
-from final;
+from final
 

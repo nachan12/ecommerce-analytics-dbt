@@ -7,10 +7,7 @@
 #}
 {{ config(
     materialized='table',
-    # Uncomment and adjust for your warehouse:
-    # BigQuery: cluster_by=['category']
-    # Snowflake: cluster_by=['category']
-    # Redshift: diststyle ALL (small table), sortkey category
+    Snowflake_cluster_by=['category']
 ) }}
 
 with product_performance as (
@@ -46,5 +43,5 @@ final as (
 )
 
 select *
-from final;
+from final
 
